@@ -1,10 +1,10 @@
+import ciudadela.Ciudadela
 import recursos.RecursosMateriales
 import solicitud.{OrdenConstruccion, SolicitudConstruccion}
 import tiposconstrucciones.{CanchaFutbol, Casa, Edificio, Gimnasio, Lago}
 import validaciones.Validaciones
 
-import java.util.{Calendar, Date}
-import scala.:+
+import java.util.Date
 import scala.io.StdIn.readLine
 
 object Main {
@@ -90,9 +90,11 @@ object Main {
 
               case _ => println("Opcion no valida")
                 opcionSolicitud = "0"
-
             }
           }
+        case "2" => //2. Consultar fecha de terminacion del proyecto de la ciudadela
+          Validaciones.consultarFechaCiudadela(ordendesConstruccion)
+
       }
     }
   }

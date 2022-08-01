@@ -1,20 +1,16 @@
 package validaciones
 
+import ciudadela.Ciudadela
 import recursos.RecursosMateriales
 import solicitud.{OrdenConstruccion, SolicitudConstruccion}
-import tiposconstrucciones.{Casa, Lago, TiposConstrucciones}
+import tiposconstrucciones.TiposConstrucciones
 
 import java.util.{Calendar, Date}
 import scala.io.StdIn.readLine
 
 object Validaciones {
-  /**
-   *
-   * @param solicitudesExistentes
-   * @param nuevaSolicitud
-   * @return
-   */
-  def verificarCoordenadas(solicitudesExistentes: List[SolicitudConstruccion], nuevaSolicitud: SolicitudConstruccion) = {
+
+  def verificarCoordenadas(solicitudesExistentes: List[SolicitudConstruccion], nuevaSolicitud: SolicitudConstruccion): Boolean = {
     //se usa var para poder identificar sí o sí en que momento hay una solicitud con las mismas coordenadas
     var verificacion = false
 
@@ -27,12 +23,6 @@ object Validaciones {
     verificacion
   }
 
-  /**
-   *
-   * @param recursosActuales
-   * @param solicitud
-   * @return
-   */
   def verificarRecursos(recursosActuales: RecursosMateriales, solicitud: SolicitudConstruccion): Boolean = {
     //se usa var para poder identificar sí o sí que hay recursos disponibles
     var verificacion = false
@@ -48,17 +38,10 @@ object Validaciones {
     verificacion
   }
 
-  /**
-   *
-   * @param verificacion
-   * @param recursos
-   * @param solicitud
-   * @return
-   */
   def cantidadActualRecursos(verificacion: Boolean, recursos: RecursosMateriales, solicitud: SolicitudConstruccion): RecursosMateriales = {
     var nuevosRecursos: RecursosMateriales = null
 
-    if (verificacion == false) {
+    if (!verificacion) {
       val cemento = recursos.cemento - solicitud.tipoConstruccion.cemento
       val grava = recursos.grava - solicitud.tipoConstruccion.grava
       val arena = recursos.arena - solicitud.tipoConstruccion.arena
@@ -78,7 +61,7 @@ object Validaciones {
     nuevosRecursos //puede llegar a tener numeros negativos por lo tanto se valida con ello si no hay recursos
   }
 
-  def manejoOpcionesSolicitudes(listaSolicitudes: List[SolicitudConstruccion], ordendesConstruccion: List[OrdenConstruccion], recursosActuales: RecursosMateriales, construccion: TiposConstrucciones) = {
+  def manejoOpcionesSolicitudes(listaSolicitudes: List[SolicitudConstruccion], ordendesConstruccion: List[OrdenConstruccion], recursosActuales: RecursosMateriales, construccion: TiposConstrucciones): (List[SolicitudConstruccion], List[OrdenConstruccion], RecursosMateriales, String) = {
     if (listaSolicitudes.isEmpty) {
       println("Ingrese la coordenada X donde se localizará la construcción")
       val coorX = readLine()
@@ -155,7 +138,7 @@ object Validaciones {
       //si por algun motivo los recursos son menores a lo que necesito retorna true
       val verificarRec = Validaciones.verificarRecursos(recursosActuales, solicitud)
 
-      if (verificarRec == false && verificarCoor == false) {
+      if (!verificarRec && !verificarCoor) {
         //listaSolicitudes = listaSolicitudes :+ solicitud
         val solicitudesActualizadas = listaSolicitudes :+ solicitud //listaSolicitudes = listaSolicitudes :+ solicitud
 
@@ -212,6 +195,18 @@ object Validaciones {
 
         (listaSolicitudes, ordendesConstruccion, recursosActuales, opcionSolicitud)
       }
+    }
+  }
+
+  def consultarFechaCiudadela(ordendesConstruccion: List[OrdenConstruccion]): Unit ={
+    if(ordendesConstruccion.isEmpty){
+      println("No hay órdenes a realizar, por lo tengo no hay fecha de culminación para el proyecto")
+      println("")
+    }else{
+      val fechaTerminacionCiudadela = new Date (ordendesConstruccion.last.fechaFinal.getTime)
+      val ciudadela = Ciudadela(fechaTerminacionCiudadela)
+      println(s"El proyecto se espera estar terminado el dia ${ciudadela.fechaTerminacion}")
+      println("")
     }
   }
 }
