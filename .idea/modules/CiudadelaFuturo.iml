@@ -12,6 +12,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="sbt: joda-time:joda-time:2.10.14:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.joda:joda-convert:2.2.2:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang:scala-library:2.13.8:jar" level="project" />
   </component>
 </module>

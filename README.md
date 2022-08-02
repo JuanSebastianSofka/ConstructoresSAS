@@ -75,3 +75,28 @@ El sistema debe permitir solicitar un informe de que construcciones están pendi
 ¿Debo hacer capa de presentación o UI? No. Si la hace, no se tiene en cuenta en la evaluación de la prueba.
 
 ¿Qué pasa si por algún error falla la creación de la orden de construcción? Se debe notificar de alguna manera que hubo un problema así sea logueando el error
+
+## Observaciones para la solución (Nota de Juán Sebastián Franco Cervera)
+
+Se planteó el uso de una variable para simular el paso de los días cada 24 horas por cada nueva solicitud que el usuario ingrese, para así poder cambiar el estado de las órdenes: Pendiente, En Progreso, Finalizado. Esto con el fin de a su vez 
+poder filtrar la información que el usuario desee ver según el tipo de solicitud que desea realizar
+
+Entre las solicitudes están:
+0. Cancelar
+1. Ingresar nueva solicitud
+2. Consultar fecha de terminacion del proyecto de la ciudadela
+3. Informe solicitudes pendientes
+4. Informe solicitudes en progreso
+5. Informe solicitudes finalizadas
+
+Por lo tanto con el pasar del tiempo se puede ir solicitando los informes y ver la información que contienen de acuerdo al estado.
+
+La opción 1 permitirá luego escoger una de las siguientes opciones:
+0. Salir
+1. Casa
+2. Lago
+3. Cancha de Fútbol
+4. Edificio
+5. Gimnasio
+
+Con ello cada que se genere una nueva solicitud de las anteriores opciones se aumenta el dia simulado en 24 horas

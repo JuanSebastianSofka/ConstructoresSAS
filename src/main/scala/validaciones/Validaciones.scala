@@ -4,6 +4,7 @@ import ciudadela.Ciudadela
 import recursos.RecursosMateriales
 import solicitud.{OrdenConstruccion, SolicitudConstruccion}
 import tiposconstrucciones.TiposConstrucciones
+import org.joda.time.DateTime
 
 import java.util.{Calendar, Date}
 import scala.io.StdIn.readLine
@@ -39,6 +40,7 @@ object Validaciones {
   }
 
   def cantidadActualRecursos(verificacion: Boolean, recursos: RecursosMateriales, solicitud: SolicitudConstruccion): RecursosMateriales = {
+    //se usa var para poder retornar nuevos amteriales
     var nuevosRecursos: RecursosMateriales = null
 
     if (!verificacion) {
@@ -61,7 +63,8 @@ object Validaciones {
     nuevosRecursos //puede llegar a tener numeros negativos por lo tanto se valida con ello si no hay recursos
   }
 
-  def manejoOpcionesSolicitudes(listaSolicitudes: List[SolicitudConstruccion], ordendesConstruccion: List[OrdenConstruccion], recursosActuales: RecursosMateriales, construccion: TiposConstrucciones): (List[SolicitudConstruccion], List[OrdenConstruccion], RecursosMateriales, String) = {
+  def manejoOpcionesSolicitudes(listaSolicitudes: List[SolicitudConstruccion], ordendesConstruccion: List[OrdenConstruccion], recursosActuales: RecursosMateriales, construccion: TiposConstrucciones):
+  (List[SolicitudConstruccion], List[OrdenConstruccion], RecursosMateriales, String) = {
     if (listaSolicitudes.isEmpty) {
       println("Ingrese la coordenada X donde se localizará la construcción")
       val coorX = readLine()
@@ -71,10 +74,7 @@ object Validaciones {
 
       val solicitud = SolicitudConstruccion(tipoConstruccion = construccion,
         coordenadaX = coorX.toInt, coodernadaY = coorY.toInt,
-        fecha = Calendar.getInstance().getTime
-       /* diaSolicitud = Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
-        mesSolicitud = Calendar.getInstance().get(Calendar.MONTH) + 1,
-        anioSolicitud = Calendar.getInstance().get(Calendar.YEAR)*/)
+        fecha = Calendar.getInstance().getTime)
 
       val fechaInicioOrden = new Date(solicitud.fecha.getTime + (1000 * 60 * 60 * 24)) //dia de mañana
       val fechaFinalOrden = new Date(fechaInicioOrden.getTime + ((1000 * 60 * 60 * 24) * (solicitud.tipoConstruccion.diasConstruccion + 1)))
@@ -86,10 +86,8 @@ object Validaciones {
         fechaFinalOrden
       )
 
-      val solicitudesActualizadas = listaSolicitudes :+ solicitud //listaSolicitudes = listaSolicitudes :+ solicitud
-      val ordenesActualizadas = ordendesConstruccion :+ ordenPrueba //ordendesConstruccion = ordendesConstruccion :+ ordenPrueba
-
-      //recursosActuales = Validaciones.cantidadActualRecursos(verificacion = false, recursos = recursosActuales, solicitud = solicitud)
+      val solicitudesActualizadas = listaSolicitudes :+ solicitud
+      val ordenesActualizadas = ordendesConstruccion :+ ordenPrueba
       val recursosActualizados = Validaciones.cantidadActualRecursos(verificacion = false, recursos = recursosActuales, solicitud = solicitud)
 
       println(
@@ -97,28 +95,12 @@ object Validaciones {
           |Se ha ingresado la solicitud con exito
           |Se ha creado la orden de construccion con exito
           |""".stripMargin)
-      solicitudesActualizadas.foreach(solicitud => {
-        println(s"Tipo Construccion: ${solicitud.tipoConstruccion.nombre}")
-        println(s"Coordenada X: ${solicitud.coordenadaX}")
-        println(s"Coordenada X: ${solicitud.coodernadaY}")
-        println(s"Fecha de la Solicitud: ${solicitud.fecha}")
-        println("")
-      })
-      ordenesActualizadas.foreach(orden => {
-        println(
-          s"""Obra: ${orden.tiposConstrucciones.nombre}
-             |Fecha de Inicio: ${orden.fechaInicio}
-             |Fecha Finalizacion: ${orden.fechaFinal}
-             |Estado: ${orden.estado}
-             |
-             |""".stripMargin)
-      })
 
       val opcionSolicitud = "0"
 
       (solicitudesActualizadas, ordenesActualizadas, recursosActualizados, opcionSolicitud)
     } else {
-      //Si la lista no está vacía
+
       println("Ingrese la coordenada X donde se localizará la construcción")
       val coorX = readLine()
 
@@ -127,10 +109,7 @@ object Validaciones {
 
       val solicitud = SolicitudConstruccion(tipoConstruccion = construccion,
         coordenadaX = coorX.toInt, coodernadaY = coorY.toInt,
-        fecha = Calendar.getInstance().getTime
-        /*diaSolicitud = Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
-        mesSolicitud = Calendar.getInstance().get(Calendar.MONTH) + 1,
-        anioSolicitud = Calendar.getInstance().get(Calendar.YEAR)*/)
+        fecha = Calendar.getInstance().getTime)
 
       //si alguna coordenada de la lista de solicitudes coincide con la nueva solicitud retorna true
       val verificarCoor = Validaciones.verificarCoordenadas(listaSolicitudes, solicitud)
@@ -139,9 +118,8 @@ object Validaciones {
       val verificarRec = Validaciones.verificarRecursos(recursosActuales, solicitud)
 
       if (!verificarRec && !verificarCoor) {
-        //listaSolicitudes = listaSolicitudes :+ solicitud
-        val solicitudesActualizadas = listaSolicitudes :+ solicitud //listaSolicitudes = listaSolicitudes :+ solicitud
 
+        val solicitudesActualizadas = listaSolicitudes :+ solicitud
         val fechaInicioOrden = new Date(ordendesConstruccion.last.fechaFinal.getTime + (1000 * 60 * 60 * 24))
         val fechaFinalOrden = new Date(fechaInicioOrden.getTime + ((1000 * 60 * 60 * 24) * (solicitud.tipoConstruccion.diasConstruccion + 1)))
 
@@ -152,34 +130,17 @@ object Validaciones {
           fechaFinalOrden
         )
 
-        //ordendesConstruccion = ordendesConstruccion :+ ordenPrueba //añado la orden con la fecha "movida" según si hay solicitudes previas
-        val ordenesActualizadas = ordendesConstruccion :+ ordenPrueba //ordendesConstruccion = ordendesConstruccion :+ ordenPrueba
+        //añado la orden con la fecha "movida" según si hay solicitudes previas
+        val ordenesActualizadas = ordendesConstruccion :+ ordenPrueba
 
-        //recursosActuales = Validaciones.cantidadActualRecursos(verificacion = false, recursos = recursosActuales, solicitud = solicitud) //recalculo los recursos
+        //recalculo los recursos
         val recursosActualizados = Validaciones.cantidadActualRecursos(verificacion = false, recursos = recursosActuales, solicitud = solicitud)
 
-        println(
+       println(
           """
             |Se ha ingresado la solicitud con exito
             |Se ha creado la orden de construccion con exito
             |""".stripMargin)
-        solicitudesActualizadas.foreach(solicitud => {
-          println(s"Tipo Construccion: ${solicitud.tipoConstruccion.nombre}")
-          println(s"Coordenada X: ${solicitud.coordenadaX}")
-          println(s"Coordenada X: ${solicitud.coodernadaY}")
-          println(s"Fecha de la Solicitud: ${solicitud.fecha}")
-          println("")
-        })
-        ordenesActualizadas.foreach(orden => {
-          println(
-            s"""Obra: ${orden.tiposConstrucciones.nombre}
-               |Fecha de Inicio: ${orden.fechaInicio}
-               |Fecha Finalizacion: ${orden.fechaFinal}
-               |Estado: ${orden.estado}
-               |
-               |""".stripMargin)
-        })
-
         val opcionSolicitud = "0"
 
         (solicitudesActualizadas, ordenesActualizadas, recursosActualizados, opcionSolicitud)
@@ -198,15 +159,78 @@ object Validaciones {
     }
   }
 
-  def consultarFechaCiudadela(ordendesConstruccion: List[OrdenConstruccion]): Unit ={
-    if(ordendesConstruccion.isEmpty){
+  def consultarFechaCiudadela(ordendesConstruccion: List[OrdenConstruccion]): Unit = {
+    if (ordendesConstruccion.isEmpty) {
       println("No hay órdenes a realizar, por lo tengo no hay fecha de culminación para el proyecto")
       println("")
-    }else{
-      val fechaTerminacionCiudadela = new Date (ordendesConstruccion.last.fechaFinal.getTime)
+    } else {
+      val fechaTerminacionCiudadela = new Date(ordendesConstruccion.last.fechaFinal.getTime)
       val ciudadela = Ciudadela(fechaTerminacionCiudadela)
       println(s"El proyecto se espera estar terminado el dia ${ciudadela.fechaTerminacion}")
       println("")
+    }
+  }
+
+  def listaOrdenesPendientes(ordendesConstruccion: List[OrdenConstruccion], diaSimulado: DateTime): List[OrdenConstruccion] = {
+
+    val listaPendientes: List[OrdenConstruccion] = ordendesConstruccion.map(construccion => {
+      if(diaSimulado.toDate.before(construccion.fechaInicio)){
+        val ordenPendiente = OrdenConstruccion(
+          construccion.tiposConstrucciones,
+          "Pendiente",
+          construccion.fechaInicio,
+          construccion.fechaFinal
+        )
+        ordenPendiente
+      }else if(diaSimulado.toDate.after(construccion.fechaInicio) && diaSimulado.toDate.before(construccion.fechaFinal)){
+        val ordenEnProgreso = OrdenConstruccion(
+          construccion.tiposConstrucciones,
+          "En Progreso",
+          construccion.fechaInicio,
+          construccion.fechaFinal
+        )
+        ordenEnProgreso
+      }else if(diaSimulado.toDate.after(construccion.fechaFinal)){
+
+        val ordenEnProgreso = OrdenConstruccion(
+          construccion.tiposConstrucciones,
+          "Finalizado",
+          construccion.fechaInicio,
+          construccion.fechaFinal
+        )
+        ordenEnProgreso
+      }
+      else{
+        construccion
+      }
+    })
+    listaPendientes
+  }
+
+  def mostrarInformacionFiltradaProgresoPendiente(orden: List[OrdenConstruccion]): Unit ={
+    if(orden.isEmpty){
+      println("Aun no hay información para ésta solicitud")
+    }else{
+      orden.foreach(o => println(
+        s"""Información órden:
+           |Tipo: ${o.tiposConstrucciones.nombre}
+           |Estado: ${o.estado}
+           |Fecha Inicio Obra: ${o.fechaInicio}
+           |""".stripMargin
+      ))
+    }
+  }
+
+  def mostrarInformacionFiltradaFinalizada(orden: List[OrdenConstruccion]): Unit ={
+    if (orden.isEmpty) {
+      println("Aun no hay información para ésta solicitud")
+    } else {
+      orden.foreach(o => println(
+        s"""Información órden
+           |Tipo: ${o.tiposConstrucciones.nombre}
+           |Estado: ${o.estado}
+           |Fecha Final Obra: ${o.fechaFinal}
+           |""".stripMargin))
     }
   }
 }
